@@ -1097,48 +1097,24 @@ void SudokuBoard::findHighLights() {
 	if ( firstletter >= 0 ) // we have to find a matched letter in another row.
 	{
 		int matchint = lettermap[firstletter] ;  // this is the number to match
-
-		// are the repeated letters in the same block?
 		int secondblock = secondletter / 3 ;
-		bool sameblock = ( (firstletter / 3) == secondblock ) ? true : false ;
 		int row, col ;
-		if ( sameblock )
-		{ // much easier
-			bool match = false ; //haven't found match yet
-			int firstcol  = firstletter  % 3 ; // which column doesn't get moved
-			int secondcol = secondletter % 3 ; // which column are we on in block?
-			int secondblock = secondletter / 3; // which block are we in?
-			for ( row = 1; ( (match == false)  && (row < 3) ); row++ )
-				// row 0 is where we are currently, so skip.
-			{	for ( col = 0; ( (match == false)  && (col < 3) ); col++ )
-				{	if ( col != firstcol ) // find matches
-					{	if ( solution[secondrowpointer+(row*9)+(secondblock*3)+col] == matchint )
-						{	match = true ; // we found the match
-							break ;
-						}
-					}
+		bool match = false ; //haven't found match yet
+		int firstcol  = firstletter  % 3 ; // which column doesn't get moved
+		int secondcol = secondletter % 3 ; // which column are we on in block?
+
+		for ( row = 0; ( (match == false)  && (row < 3) ); row++ )
+		{	for ( col = 0; ( (match == false)  && (col < 3) ); col++ )
+			{	if ( solution[secondrowpointer+(row*9)+(secondblock*3)+col] == matchint )
+				{	match = true ; // we found the match
+					break ;
 				}
 			}
-			col = (secondblock*3) + col ; // current matched column.
-			// now have row, column.
-		} else {
-			bool match = false ; //haven't found match yet
-			int firstcol  = firstletter  % 3 ; // which column doesn't get moved
-			int secondcol = secondletter % 3 ; // which column are we on in block?
-			int secondblock = secondletter / 3; // which block are we in?
-			for ( row = 0; ( (match == false)  && (row < 3) ); row++ )
-				// row 0 is also checked here
-			{	for ( col = 0; ( (match == false)  && (col < 3) ); col++ )
-				{	if ( solution[secondrowpointer+(row*9)+(secondblock*3)+col] == matchint )
-					{	match = true ; // we found the match
-						break ;
-					}
-				}
-			}
-			col = (secondblock*3) + col ; // current matched column.
-			// now have row, column.
 		}
-		moveRow(row-1, secondrowpointer);
+
+		col = (secondblock*3) + col ; // current matched column.
+		// now have row, column.
+		moveRow(row-1, secondrowpointer);  // row auto incremented, so subtract 1
 		moveCol(col,secondletter);
 	}
 	for ( int i = 0; i < phraseString[0].length(); i++ )
@@ -1150,7 +1126,7 @@ void SudokuBoard::findHighLights() {
 	for ( int i = 0; i < 9; i++ )
 	{
 		lettermap[i] = solution[firstrowpointer+i]; // fill in letter map with row 5.
-		cout << lettermap[i] << " " ;
+//		cout << lettermap[i] << " " ;
 	}
 	phraseString[0] = "         " ; // blank string to start with now.
 //	phraseString[0] = phraseString[1][lettermap[0]-1]; // reset 0 to 9 characters
@@ -1164,7 +1140,7 @@ void SudokuBoard::moveRow(int row, int secondrowpointer)
 	int temp ;
 	row *= 9 ;
 	// holds data while we swap.
-	cout << row << " " << secondrowpointer << endl ;
+
 	for ( int i = 0 ; i < 9 ; i++ )
 	{	temp = solution[secondrowpointer+i] ;
 		solution[secondrowpointer+i] = solution[secondrowpointer+row+i] ;
@@ -1177,7 +1153,7 @@ void SudokuBoard::moveRow(int row, int secondrowpointer)
 void SudokuBoard::moveCol(int col, int secondcolpointer)
 {
 	int temp ;
-	cout << col << " " << secondcolpointer << endl ;
+
 	// holds data while we swap.
 	for ( int i = 0 ; i < 9 ; i++ )
 	{	temp = puzzle[secondcolpointer + (i*9)] ;
@@ -1253,8 +1229,6 @@ void SudokuBoard::setPhrase(string* inphraseString){
 		// now we'll fill in rest of string with unused consonants
 		for ( j = phraseString[0].length(); j < 9; j++ )
 			phraseString[1] += touse[k++]; // pad out string to 9 characters
-
-		cout << phraseString[0] << phraseString[1] << endl;
 	}
 }
 
